@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Plywood VAT Đủ Ly</title>
+
+<style>
+body{
+    margin:0;
+    padding:10px;
+    background:#f2f2f7;
+    font-family:-apple-system,sans-serif;
+}
+.card{
+    max-width:390px;
+    margin:auto;
+    background:#fff;
+    border-radius:16px;
+    padding:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+h2{
+    text-align:center;
+    margin:0 0 12px;
+}
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+}
+.row label{
+    font-size:14px;
+}
+.row input{
+    width:130px;
+    height:34px;
+    text-align:right;
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:0 8px;
+}
+.result{
+    margin-top:12px;
+    border-top:1px solid #eee;
+    padding-top:10px;
+}
+.result div{
+    display:flex;
+    justify-content:space-between;
+    margin:5px 0;
+}
+.value{
+    color:#007AFF;
+    font-weight:600;
+}
+.total{
+    font-size:17px;
+    font-weight:bold;
+    border-top:1px dashed #ccc;
+    padding-top:6px;
+    margin-top:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Plywood VAT Đủ Ly</h2>
+
+<div class="row">
+<label>Thickness (mm)</label>
+<input id="thickness" value="11">
+</div>
+
+<div class="row">
+<label>Width (mm)</label>
+<input id="width" value="1220">
+</div>
+
+<div class="row">
+<label>Length (mm)</label>
+<input id="length" value="2440">
+</div>
+
+<div class="row">
+<label>Bundles</label>
+<input id="bundles" value="18">
+</div>
+
+<div class="row">
+<label>Pcs/Bundle</label>
+<input id="pcsBundle" value="90">
+</div>
+
+<div class="row">
+<label>Price/m³</label>
+<input id="priceM3" value="6,300,000">
+</div>
+
+<div class="result">
+
+<div>
+<span>Total PCS</span>
+<span class="value" id="totalPcs">0</span>
+</div>
+
+<div>
+<span>CBM</span>
+<span class="value" id="cbmResult">0</span>
+</div>
+
+<div>
+<span>Amount</span>
+<span class="value" id="amountResult">0</span>
+</div>
+
+<div>
+<span>VAT 8%</span>
+<span class="value" id="vatResult">0</span>
+</div>
+
+<div class="total">
+<span>Total Invoice</span>
+<span class="value" id="totalResult">0</span>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function getNumber(id){
+    return Number(
+        document.getElementById(id)
+        .value
+        .replace(/,/g,'')
+    ) || 0;
+}
+
+function formatMoney(num){
+    return Math.round(num)
+        .toLocaleString('en-US');
+}
+
+function formatInput(el){
+
+    let value = el.value.replace(/,/g,'');
+
+    if(value === '' || isNaN(value))
+        return;
+
+    el.value = Number(value)
+        .toLocaleString('en-US');
+}
+
+function calculate(){
+
+    let thickness = getNumber('thickness');
+    let width = getNumber('width');
+    let length = getNumber('length');
+    let bundles = getNumber('bundles');
+    let pcsBundle = getNumber('pcsBundle');
+    let priceM3 = getNumber('priceM3');
+
+    let pcs = bundles * pcsBundle;
+
+    let cbmValue =
+        width * length *
+        thickness *
+        pcs /
+        1000000000;
+
+    let amountValue =
+        cbmValue * priceM3;
+
+    let vatValue =
+        amountValue * 0.08;
+
+    let totalValue =
+        amountValue + vatValue;
+
+    document.getElementById('totalPcs').innerText =
+        formatMoney(pcs);
+
+    document.getElementById('cbmResult').innerText =
+        cbmValue.toFixed(2);
+
+    document.getElementById('amountResult').innerText =
+        formatMoney(amountValue);
+
+    document.getElementById('vatResult').innerText =
+        formatMoney(vatValue);
+
+    document.getElementById('totalResult').innerText =
+        formatMoney(totalValue);
+}
+
+document.querySelectorAll('input').forEach(input => {
+
+    input.addEventListener('input', function(){
+
+        formatInput(this);
+        calculate();
+
+    });
+
+});
+
+calculate();
+
+</script>
+
+</body>
+</html>
